@@ -119,6 +119,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                     value = ['OK','Disabled','Unknown','Link Down'].index(nic['status'])
                 except ValueError:
                     value = 4
+                    print_err('unrecognised nic status: {}'.format(nic['status']))
 
                 prometheus_metrics.hpilo_nic_status_gauge.labels(product_name=product_name,
                                                                  server_name=server_name,
