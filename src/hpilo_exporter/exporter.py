@@ -112,6 +112,18 @@ class RequestHandler(BaseHTTPRequestHandler):
                                 prometheus_metrics.gauges[gauge].labels(product_name=product_name,
                                                                         server_name=server_name).set(2)
 
+            # get nic information
+            for nic_name,nic in embedded_health['nic_information'].items():
+                try:
+                    value = ['OK','Disabled','Unknown','Link Down'].index(nic['status'])
+                except ValueError:
+                    value = 4
+
+                prometheus_metrics.hpilo_nic_status_gauge.labels(product_name=product_name,
+                                                                 server_name=server_name,
+                                                                 nic_name=nic_name,
+                                                                 ip_address=nic['ip_address']).set(value)
+
             # get firmware version
             fw_version = ilo.get_fw_version()["firmware_version"]
             # prometheus_metrics.hpilo_firmware_version.set(fw_version)
